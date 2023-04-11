@@ -64,7 +64,7 @@ export default {
     }
 
     p {
-        color: wheat;
+        color: #8d8d8d;
         font-family: cursive;
     }
 </style>
