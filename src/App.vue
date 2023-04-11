@@ -1,28 +1,79 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="app">
+        <h1>Tarefas</h1>
+        <TaskProgress :progress="progress" />
+        <NewTask @taskAdded="addTask" />
+        <TaskGrid
+            @taskDeleted="deleteTask"
+            @taskStateChanged="toggleTaskState"
+            :tasks="tasks"
+        />
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TaskGrid from './components/TaskGrid.vue'
+import NewTask from './components/NewTask.vue'
+import TaskProgress from './components/TaskProgress.vue'
+
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+    components: { TaskGrid, NewTask, TaskProgress },
+    name: 'App',
+    data() {
+        return {
+            tasks: []
+        }
+    },
+    computed: {
+        progress() {
+            const total = this.tasks.length
+            const done = this.tasks.filter(t => !t.pending).length
+            return Math.round(done / total * 100) || 0
+        }
+    },
+    methods: {
+        addTask(task) {
+            // sameName == funcao
+            const sameName = t => t.name === task.name
+            const reallyNew = this.tasks.filter(sameName).length == 0
+            if (reallyNew) {
+                this.tasks.push({
+                    name: task.name,
+                    pending: task.pending || true
+                })
+            }
+        },
+        deleteTask(i) {
+            this.tasks.splice(i, 1)
+        },
+        toggleTaskState(i) {
+            this.tasks[i].pending = !this.tasks[i].pending
+        }
+    }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+    body {
+        background: rgb(2,0,36);
+        background: linear-gradient(42deg, rgba(2,0,36,1) 0%, rgba(9,92,121,1) 56%, rgba(0,212,255,1) 100%);
+    }
+
+    #app {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh
+    }
+    
+    h1 {
+        text-align: center;
+        font-size: 3rem;
+        font-family: cursive;
+        color: white;
+        font-weight: 100;
+    }
 </style>
